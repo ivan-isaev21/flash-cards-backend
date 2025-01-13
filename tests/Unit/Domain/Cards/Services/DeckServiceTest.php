@@ -168,7 +168,7 @@ class DeckServiceTest extends TestCase
             ->shouldReceive('handle')
             ->once()
             ->with($command)
-            ->andThrow(new DeckNotFoundException());
+            ->andThrow(new DeckNotFoundException($notFoundId));
 
         $this->expectException(DeckNotFoundException::class);
         $this->deckService->update($command);

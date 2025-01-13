@@ -23,7 +23,7 @@ class UpdateDeckHandler
         $deck = $this->repository->findDeckById($command->id);
 
         if ($deck === null) {
-            throw new DeckNotFoundException("Deck with id : " . $command->id->getValue() . 'does not exist!');
+            throw new DeckNotFoundException($command->id);
         }
 
         $updatedDeck = new Deck(

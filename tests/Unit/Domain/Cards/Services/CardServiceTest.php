@@ -182,7 +182,7 @@ class CardServiceTest extends TestCase
             ->shouldReceive('handle')
             ->once()
             ->with($command)
-            ->andThrow(new CardNotFoundException());
+            ->andThrow(new CardNotFoundException($notFoundId));
 
         $this->expectException(CardNotFoundException::class);
         $this->cardService->update($command);
@@ -234,7 +234,7 @@ class CardServiceTest extends TestCase
             ->shouldReceive('handle')
             ->once()
             ->with($command)
-            ->andThrow(new CardNotFoundException());
+            ->andThrow(new CardNotFoundException($notFoundId));
 
         $this->expectException(CardNotFoundException::class);
         $this->cardService->dublicate($command);

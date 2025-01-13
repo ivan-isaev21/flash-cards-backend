@@ -23,7 +23,7 @@ class DublicateCardHandler
         $card = $this->repository->findCardById($command->id);
 
         if ($card === null) {
-            throw new CardNotFoundException("Card with id : " . $command->id->getValue() . 'does not exist!');
+            throw new CardNotFoundException($command->id);
         }
 
         $dublicatedCard = new Card(
