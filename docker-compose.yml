@@ -1,0 +1,55 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: "3.1"
+services:
+    # База данных
+    mariadb:
+        container_name: flash-cards-microservice-mariadb
+        image: "mariadb:10.6"
+        working_dir: /application
+        volumes:
+            - "./:/application"
+            - "./storage/mysql-data:/var/lib/mysql/"
+        environment:
+            - MYSQL_ROOT_PASSWORD=Aa123456789
+            - MYSQL_DATABASE=flash-cards-microservice
+            - MYSQL_USER=flash-cards-microservice
+            - MYSQL_PASSWORD=Aa123456789
+        ports:
+            - "8383:3306"
+
+    # Nginx
+    webserver:
+        container_name: flash-cards-microservice-webserver
+        image: "nginx:alpine"
+        working_dir: /application`
+        volumes:
+            - "./:/application"
+            - "./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf"
+        ports:
+            - "8323:80"
+
+    # PHP-FPM + PHP CLI
+    php-fpm:
+        container_name: flash-cards-microservice-php-fpm
+        build:
+            context: .
+            dockerfile: phpdocker/php-fpm/Dockerfile
+        working_dir: /application
+        volumes:
+            - "./:/application"
+            - "./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini"
+
+    # Supervisor 
+    # scheduler:
+    #     container_name: flash-cards-microservice-scheduler
+    #     build:
+    #         context: .
+    #         dockerfile: phpdocker/php-fpm/Dockerfile.scheduler
+    #     working_dir: /application
+    #     volumes:
+    #         - "./:/application"
+    #         - "./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini"
+
+    
