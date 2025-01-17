@@ -23,7 +23,6 @@ use App\Domain\Cards\Entities\Deck;
 use App\Domain\Cards\Entities\DeckItem;
 use App\Domain\Cards\Events\DeckItemCreated;
 use App\Domain\Cards\Events\DeckItemDeleted;
-use App\Domain\Cards\Events\DeckItemDublicated;
 use App\Domain\Cards\Events\DeckItemUpdated;
 use App\Domain\Cards\Exceptions\CardNotFoundException;
 use App\Domain\Cards\Exceptions\DeckItemNotFoundException;
@@ -95,6 +94,7 @@ class DeckItemServiceTest extends TestCase
     {
         $id = DeckId::next();
         $name = fake()->name();
+        $locale = Locale::EN_US;
         $type = DeckType::PRIVATE;
         $createdBy = UserId::next();
         $createdAt = new DateTimeImmutable();
@@ -103,6 +103,7 @@ class DeckItemServiceTest extends TestCase
         return new Deck(
             id: $id,
             name: $name,
+            locale:$locale,
             type: $type,
             createdBy: $createdBy,
             createdAt: $createdAt,

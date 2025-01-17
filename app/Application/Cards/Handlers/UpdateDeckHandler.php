@@ -28,6 +28,7 @@ class UpdateDeckHandler
 
         $updatedDeck = new Deck(
             id: $deck->id,
+            locale: $command->locale ?? $deck->locale,
             name: $command->name ?? $deck->name,
             type: $command->type ?? $deck->type,
             createdBy: $command->createdBy,

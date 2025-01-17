@@ -11,6 +11,7 @@ interface DeckRepository
     public function paginate(int $page, int $perPage): LengthAwarePaginator;
     public function create(Deck $deck): Deck;
     public function findDeckById(DeckId $id): ?Deck;
+    public function findDeckByName(string $name): ?Deck;
     public function update(Deck $deck): Deck;
     public function delete(DeckId $id): void;
 }

@@ -21,6 +21,7 @@ use App\Domain\Cards\Events\DeckDeleted;
 use App\Domain\Cards\Events\DeckDublicated;
 use App\Domain\Cards\Events\DeckUpdated;
 use App\Domain\Cards\Exceptions\DeckNotFoundException;
+use App\Domain\Cards\Exceptions\DeckWithNameAlreadyExistsException;
 use App\Domain\Cards\Services\DeckService;
 use DateTimeImmutable;
 use Mockery;
@@ -65,6 +66,7 @@ class DeckServiceTest extends TestCase
     {
         $id = DeckId::next();
         $name = fake()->name();
+        $locale = Locale::EN_US;
         $type = DeckType::PRIVATE;
         $createdBy = UserId::next();
         $createdAt = new DateTimeImmutable();
@@ -72,7 +74,8 @@ class DeckServiceTest extends TestCase
 
         return new Deck(
             id: $id,
-            name:$name,
+            name: $name,
+            locale: $locale,
             type: $type,
             createdBy: $createdBy,
             createdAt: $createdAt,
@@ -106,6 +109,7 @@ class DeckServiceTest extends TestCase
 
         $command = new CreateDeckCommand(
             name: $deck->name,
+            locale: $deck->locale,
             type: $deck->type,
             createdBy: $deck->createdBy
         );
@@ -126,9 +130,30 @@ class DeckServiceTest extends TestCase
         $this->assertEquals($deck, $result);
     }
 
+    public function test_create_with_dublicate_name(): void
+    {
+        $deck = $this->buildDeck();
+
+        $command = new CreateDeckCommand(
+            locale: $deck->locale,
+            name: $deck->name,
+            type: $deck->type,
+            createdBy: $deck->createdBy
+        );
+
+        $this->createDeckHandler
+            ->shouldReceive('handle')
+            ->once()
+            ->with($command)
+            ->andThrow(DeckWithNameAlreadyExistsException::class);
+
+        $this->expectException(DeckWithNameAlreadyExistsException::class);
+        $this->deckService->create($command);
+    }
+
     public function test_success_update(): void
     {
-        $deck= $this->buildDeck();
+        $deck = $this->buildDeck();
 
         $command = new UpdateDeckCommand(
             id: $deck->id,
