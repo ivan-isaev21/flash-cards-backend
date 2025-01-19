@@ -38,7 +38,7 @@ class UpdateCardRequest extends FormRequest
     {
         return new UpdateCardCommand(
             id: new CardId($id),
-            createdBy: new UserId('hard-code'),
+            createdBy: UserId::next(),
             locale: $this->input('locale') ?? null,
             question: $this->input('question') ?? null,
             answer: $this->input('answer') ?? null,

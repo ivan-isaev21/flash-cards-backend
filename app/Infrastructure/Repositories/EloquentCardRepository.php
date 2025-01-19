@@ -4,12 +4,13 @@ namespace App\Infrastructure\Repositories;
 
 use App\Application\Cards\ValueObjects\CardId;
 use App\Application\Shared\Enums\Locale;
+use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\Card;
 use App\Domain\Cards\Repositories\CardRepository;
 use App\Models\Card as CardModel;
 use DateTimeImmutable;
-use Illuminate\Container\Attributes\DB;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class EloquentCardRepository implements CardRepository
 {
@@ -36,11 +37,11 @@ class EloquentCardRepository implements CardRepository
     {
         return DB::transaction(function () use ($card) {
             $cardModel = CardModel::create([
-                'id' => $card->id,
+                'id' => $card->id->getValue(),
                 'locale' => $card->locale->value,
                 'question' => $card->question,
                 'answer' => $card->answer,
-                'keywords' => $card->answer,
+                'keywords' => $card->keywords,
                 'created_by' => $card->createdBy
             ]);
 
@@ -56,7 +57,7 @@ class EloquentCardRepository implements CardRepository
                 'locale' => $card->locale->value,
                 'question' => $card->question,
                 'answer' => $card->answer,
-                'keywords' => $card->answer,
+                'keywords' => $card->keywords,
             ]);
             return $this->mapToEntity($cardModel);
         });
@@ -73,12 +74,12 @@ class EloquentCardRepository implements CardRepository
     private function mapToEntity(CardModel $card): Card
     {
         return new Card(
-            id: $card->id,
+            id: new CardId($card->id),
             locale: Locale::from($card->locale),
             question: $card->question,
             answer: $card->answer,
             keywords: $card->keywords,
-            createdBy: $card->created_by,
+            createdBy: new UserId($card->created_by),
             createdAt: new DateTimeImmutable($card->created_at),
             updatedAt: new DateTimeImmutable($card->updated_at)
         );

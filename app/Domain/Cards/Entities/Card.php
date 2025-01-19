@@ -19,4 +19,18 @@ class Card
         public readonly DateTimeImmutable $createdAt,
         public readonly DateTimeImmutable $updatedAt,
     ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->getValue(),
+            'locale' => $this->locale->value,
+            'question' => $this->question,
+            'answer' => $this->answer,
+            'keywords' => $this->keywords,
+            'createdBy' => $this->createdBy->getValue(),
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+        ];
+    }
 }

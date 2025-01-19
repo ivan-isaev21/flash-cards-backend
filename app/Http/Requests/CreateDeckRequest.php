@@ -39,7 +39,7 @@ class CreateDeckRequest extends FormRequest
             name: $this->input('name'),
             locale: Locale::from($this->input('locale')),
             type: DeckType::from($this->input('type')),
-            createdBy: new UserId('hard-code')
+            createdBy: UserId::next()
         );
     }
 }

@@ -38,7 +38,7 @@ class UpdateDeckRequest extends FormRequest
     {
         return new UpdateDeckCommand(
             id: new DeckId($id),
-            createdBy: new UserId('hard-code'),
+            createdBy: UserId::next(),
             locale: $this->input('locale') !== null ? Locale::from($this->input('locale')) : null,
             name: $this->input('name') ?? null,
             type: $this->input('type') !== null ? DeckType::from($this->input('type')) : null

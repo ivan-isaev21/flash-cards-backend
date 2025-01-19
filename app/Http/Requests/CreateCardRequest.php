@@ -40,7 +40,7 @@ class CreateCardRequest extends FormRequest
             question: $this->input('question'),
             answer: $this->input('answer'),
             keywords: $this->input('keywords'),
-            createdBy: new UserId('hard-code')
+            createdBy: UserId::next()
         );
     }
 }

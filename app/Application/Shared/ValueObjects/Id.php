@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Application\Shared\ValueObjects;
 
 use Ramsey\Uuid\Uuid;

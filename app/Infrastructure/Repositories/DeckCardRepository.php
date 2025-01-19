@@ -5,12 +5,13 @@ namespace App\Infrastructure\Repositories;
 use App\Application\Cards\Enums\DeckType;
 use App\Application\Cards\ValueObjects\DeckId;
 use App\Application\Shared\Enums\Locale;
+use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\Deck;
 use App\Domain\Cards\Repositories\DeckRepository;
 use App\Models\Deck as DeckModel;
 use DateTimeImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Container\Attributes\DB;
+use Illuminate\Support\Facades\DB;
 
 class EloquentDeckRepository implements DeckRepository
 {
@@ -41,9 +42,9 @@ class EloquentDeckRepository implements DeckRepository
 
     public function create(Deck $deck): Deck
     {
-        return Db::transaction(function () use ($deck) {
+        return DB::transaction(function () use ($deck) {
             $deckModel = DeckModel::create([
-                'id' => $deck->id,
+                'id' => $deck->id->getValue(),
                 'locale' => $deck->locale,
                 'name' => $deck->name,
                 'type' => $deck->type->value,
@@ -80,11 +81,11 @@ class EloquentDeckRepository implements DeckRepository
     private function mapToEntity(DeckModel $deckModel): Deck
     {
         return new Deck(
-            id: $deckModel->id,
+            id: new DeckId($deckModel->id),
             locale: Locale::from($deckModel->locale),
             name: $deckModel->name,
             type: DeckType::from($deckModel->type),
-            createdBy: $deckModel->created_by,
+            createdBy: new UserId($deckModel->created_by),
             createdAt: new DateTimeImmutable($deckModel->created_at),
             updatedAt: new DateTimeImmutable($deckModel->updated_at),
         );

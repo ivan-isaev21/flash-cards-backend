@@ -9,11 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 class Card extends Model
 {
     /** @use HasFactory<\Database\Factories\CardFactory> */
-    use HasFactory, HasUlids;
+    use HasFactory;
 
     protected $table = 'cards';
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
+        'id',
         'locale',
         'question',
         'answer',
