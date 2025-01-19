@@ -6,6 +6,7 @@ use App\Application\Cards\Commands\CreateDeckItemCommand;
 use App\Application\Cards\ValueObjects\DeckItemId;
 use App\Domain\Cards\Entities\DeckItem;
 use App\Domain\Cards\Exceptions\CardNotFoundException;
+use App\Domain\Cards\Exceptions\DeckItemInvalidArgumentException;
 use App\Domain\Cards\Exceptions\DeckNotFoundException;
 use App\Domain\Cards\Repositories\CardRepository;
 use App\Domain\Cards\Repositories\DeckItemRepository;
@@ -36,6 +37,10 @@ class CreateDeckItemHandler
 
         if ($card === null) {
             throw new CardNotFoundException($command->cardId);
+        }
+
+        if ($deck->locale->value !== $card->locale->value) {
+            throw new DeckItemInvalidArgumentException("Deck locale and card locale is not equals!");
         }
 
         $deckItem = new DeckItem(

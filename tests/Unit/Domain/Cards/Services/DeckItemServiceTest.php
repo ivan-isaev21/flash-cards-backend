@@ -25,6 +25,7 @@ use App\Domain\Cards\Events\DeckItemCreated;
 use App\Domain\Cards\Events\DeckItemDeleted;
 use App\Domain\Cards\Events\DeckItemUpdated;
 use App\Domain\Cards\Exceptions\CardNotFoundException;
+use App\Domain\Cards\Exceptions\DeckItemInvalidArgumentException;
 use App\Domain\Cards\Exceptions\DeckItemNotFoundException;
 use App\Domain\Cards\Exceptions\DeckNotFoundException;
 use App\Domain\Cards\Services\DeckItemService;
@@ -257,6 +258,26 @@ class DeckItemServiceTest extends TestCase
 
         $this->expectException(CardNotFoundException::class);
         $this->deckService->update($command);
+    }
+
+    public function test_not_equals_locales(): void
+    {
+        $cardId = CardId::next();
+        $deckId = DeckId::next();
+
+        $command = new CreateDeckItemCommand(
+            deckId: $deckId,
+            cardId: $cardId
+        );
+
+        $this->createDeckItemHandler
+            ->shouldReceive('handle')
+            ->once()
+            ->with($command)
+            ->andThrow(new DeckItemInvalidArgumentException());
+
+        $this->expectException(DeckItemInvalidArgumentException::class);
+        $this->deckService->create($command);
     }
 
     public function test_success_delete(): void

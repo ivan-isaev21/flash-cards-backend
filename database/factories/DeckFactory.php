@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Application\Cards\Enums\DeckType;
+use App\Application\Shared\Enums\Locale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class DeckFactory extends Factory
     {
         return [
             'id' => fake()->uuid(),
-            'name' => fake()->unique()->name(),
+            'name' => fake()->unique()->word(),
+            'locale' => Locale::RU_RU->value,
             'type' => fake()->randomElement(DeckType::cases())->value,
             'created_by' => fake()->uuid()
         ];

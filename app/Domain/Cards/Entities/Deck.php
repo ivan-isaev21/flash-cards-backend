@@ -19,4 +19,17 @@ class Deck
         public readonly DateTimeImmutable $createdAt,
         public readonly DateTimeImmutable $updatedAt,
     ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->getValue(),
+            'name' => $this->name,
+            'locale' => $this->locale->value,
+            'type' => $this->type->value,
+            'createdBy' => $this->createdBy->getValue(),
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+        ];
+    }
 }

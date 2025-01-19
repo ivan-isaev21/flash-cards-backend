@@ -45,7 +45,7 @@ class EloquentDeckRepository implements DeckRepository
         return DB::transaction(function () use ($deck) {
             $deckModel = DeckModel::create([
                 'id' => $deck->id->getValue(),
-                'locale' => $deck->locale,
+                'locale' => $deck->locale->value,
                 'name' => $deck->name,
                 'type' => $deck->type->value,
                 'created_by' => $deck->createdBy
@@ -61,7 +61,7 @@ class EloquentDeckRepository implements DeckRepository
             $deckModel = DeckModel::findOrFail($deck->id);
             $deckModel->update([
                 'id' => $deck->id,
-                'locale' => $deck->locale,
+                'locale' => $deck->locale->value,
                 'name' => $deck->name,
                 'type' => $deck->type->value,
                 'created_by' => $deck->createdBy
