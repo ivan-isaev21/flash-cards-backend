@@ -3,12 +3,9 @@
 namespace App\Infrastructure\Repositories;
 
 use App\Application\Cards\ValueObjects\CardId;
-use App\Application\Shared\Enums\Locale;
-use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\Card;
 use App\Domain\Cards\Repositories\CardRepository;
 use App\Models\Card as CardModel;
-use DateTimeImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +16,7 @@ class EloquentCardRepository implements CardRepository
         $paginator = CardModel::query()->paginate($perPage, ['*'], 'page', $page);
 
         $entities = $paginator->getCollection()->map(function ($model) {
-            return $this->mapToEntity($model);
+            return $model->mapToEntity();
         });
 
         $paginator->setCollection($entities);
@@ -30,7 +27,7 @@ class EloquentCardRepository implements CardRepository
     public function findCardById(CardId $id): ?Card
     {
         $cardModel = CardModel::find($id);
-        return $cardModel !== null ? $this->mapToEntity($cardModel) : null;
+        return $cardModel !== null ? $cardModel->mapToEntity() : null;
     }
 
     public function create(Card $card): Card
@@ -45,21 +42,21 @@ class EloquentCardRepository implements CardRepository
                 'created_by' => $card->createdBy
             ]);
 
-            return $this->mapToEntity($cardModel);
+            return $cardModel->mapToEntity();
         });
     }
 
     public function update(Card $card): Card
     {
         return DB::transaction(function () use ($card) {
-            $cardModel = CardModel::findOrFail($card->id);
+            $cardModel = CardModel::findOrFail($card->id->getValue());
             $cardModel->update([
                 'locale' => $card->locale->value,
                 'question' => $card->question,
                 'answer' => $card->answer,
                 'keywords' => $card->keywords,
             ]);
-            return $this->mapToEntity($cardModel);
+            return $cardModel->mapToEntity();
         });
     }
 
@@ -69,19 +66,5 @@ class EloquentCardRepository implements CardRepository
             $cardModel = CardModel::findOrFail($id);
             $cardModel->delete();
         });
-    }
-
-    private function mapToEntity(CardModel $card): Card
-    {
-        return new Card(
-            id: new CardId($card->id),
-            locale: Locale::from($card->locale),
-            question: $card->question,
-            answer: $card->answer,
-            keywords: $card->keywords,
-            createdBy: new UserId($card->created_by),
-            createdAt: new DateTimeImmutable($card->created_at),
-            updatedAt: new DateTimeImmutable($card->updated_at)
-        );
     }
 }

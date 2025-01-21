@@ -10,7 +10,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface DeckItemRepository
 {
     public function paginate(DeckId $deckId, int $page, int $perPage): LengthAwarePaginator;
-    public function create(DeckItem $deck): DeckItem;
+    public function create(DeckItem $deckItem): DeckItem;
     public function findDeckItemById(DeckItemId $id): ?DeckItem;
     public function update(DeckItem $deckItem): DeckItem;
     public function delete(DeckItemId $id): void;

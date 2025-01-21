@@ -21,4 +21,11 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
         Route::put('{id}', 'DeckController@update')->name('api.v1.decks.update');
         Route::delete('{id}', 'DeckController@delete')->name('api.v1.decks.delete');
     });
+
+    Route::group(['prefix' => 'deck-items'], function () {
+        Route::get('{deckId}', 'DeckItemController@paginate')->name('api.v1.deck-items.paginate');
+        Route::post('/', 'DeckItemController@create')->name('api.v1.deck-items.create');
+        Route::put('{id}', 'DeckItemController@update')->name('api.v1.deck-items.update');
+        Route::delete('{id}', 'DeckItemController@delete')->name('api.v1.deck-items.delete');
+    });
 });

@@ -14,4 +14,15 @@ class DeckItem
         public readonly DateTimeImmutable $createdAt,
         public readonly DateTimeImmutable $updatedAt
     ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->getValue(),
+            'card' => $this->card->toArray(),
+            'deck' => $this->deck->toArray(),
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+        ];
+    }
 }

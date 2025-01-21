@@ -29,7 +29,7 @@ class CreateDeckItemHandler
     public function handle(CreateDeckItemCommand $command): DeckItem
     {
         $deck = $this->deckRepository->findDeckById($command->deckId);
-        $card = $this->cardRepository->findDeckById($command->cardId);
+        $card = $this->cardRepository->findCardById($command->cardId);
 
         if ($deck === null) {
             throw new DeckNotFoundException($command->deckId);

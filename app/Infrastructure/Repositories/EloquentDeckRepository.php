@@ -2,14 +2,10 @@
 
 namespace App\Infrastructure\Repositories;
 
-use App\Application\Cards\Enums\DeckType;
 use App\Application\Cards\ValueObjects\DeckId;
-use App\Application\Shared\Enums\Locale;
-use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\Deck;
 use App\Domain\Cards\Repositories\DeckRepository;
 use App\Models\Deck as DeckModel;
-use DateTimeImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +16,7 @@ class EloquentDeckRepository implements DeckRepository
         $paginator = DeckModel::query()->paginate($perPage, ['*'], 'page', $page);
 
         $entities = $paginator->getCollection()->map(function ($model) {
-            return $this->mapToEntity($model);
+            return $model->mapToEntity();
         });
 
         $paginator->setCollection($entities);
@@ -31,13 +27,13 @@ class EloquentDeckRepository implements DeckRepository
     public function findDeckById(DeckId $id): ?Deck
     {
         $deckModel = DeckModel::find($id);
-        return $deckModel !== null ? $this->mapToEntity($deckModel) : null;
+        return $deckModel !== null ? $deckModel->mapToEntity() : null;
     }
 
     public function findDeckByName(string $name): ?Deck
     {
         $deckModel = DeckModel::where('name', $name)->first();
-        return $deckModel !== null ? $this->mapToEntity($deckModel) : null;
+        return $deckModel !== null ? $deckModel->mapToEntity() : null;
     }
 
     public function create(Deck $deck): Deck
@@ -51,14 +47,14 @@ class EloquentDeckRepository implements DeckRepository
                 'created_by' => $deck->createdBy
             ]);
 
-            return $this->mapToEntity($deckModel);
+            return $deckModel->mapToEntity();
         });
     }
 
     public function update(Deck $deck): Deck
     {
         return DB::transaction(function () use ($deck) {
-            $deckModel = DeckModel::findOrFail($deck->id);
+            $deckModel = DeckModel::findOrFail($deck->id->getValue());
             $deckModel->update([
                 'id' => $deck->id,
                 'locale' => $deck->locale->value,
@@ -66,7 +62,7 @@ class EloquentDeckRepository implements DeckRepository
                 'type' => $deck->type->value,
                 'created_by' => $deck->createdBy
             ]);
-            return $this->mapToEntity($deckModel);
+            return $deckModel->mapToEntity();
         });
     }
 
@@ -76,18 +72,5 @@ class EloquentDeckRepository implements DeckRepository
             $deckModel = DeckModel::findOrFail($id);
             $deckModel->delete();
         });
-    }
-
-    private function mapToEntity(DeckModel $deckModel): Deck
-    {
-        return new Deck(
-            id: new DeckId($deckModel->id),
-            locale: Locale::from($deckModel->locale),
-            name: $deckModel->name,
-            type: DeckType::from($deckModel->type),
-            createdBy: new UserId($deckModel->created_by),
-            createdAt: new DateTimeImmutable($deckModel->created_at),
-            updatedAt: new DateTimeImmutable($deckModel->updated_at),
-        );
     }
 }
