@@ -28,7 +28,7 @@ class EloquentDeckItemRepository implements DeckItemRepository
     public function findDeckItemById(DeckItemId $id): ?DeckItem
     {
         $deckItemModel = DeckItemModel::find($id);
-        return   $deckItemModel !== null ? $deckItemModel->mapToEntity() : null;
+        return $deckItemModel !== null ? $deckItemModel->mapToEntity() : null;
     }
 
     public function create(DeckItem $deckItem): DeckItem
@@ -37,7 +37,7 @@ class EloquentDeckItemRepository implements DeckItemRepository
             $deckItemModel = DeckItemModel::create([
                 'id' => $deckItem->id->getValue(),
                 'deck_id' => $deckItem->deck->id->getValue(),
-                'card_id' => $deckItem->card->id->getValue(),
+                'card_id' => $deckItem->card->id->getValue()
             ]);
 
             return $deckItemModel->mapToEntity();
@@ -52,10 +52,10 @@ class EloquentDeckItemRepository implements DeckItemRepository
                 'deck_id' => $deckItem->deck->id->getValue(),
                 'card_id' => $deckItem->card->id->getValue(),
             ]);
+
             return $deckItemModel->mapToEntity();
         });
     }
-
 
     public function delete(DeckItemId $id): void
     {

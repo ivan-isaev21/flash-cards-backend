@@ -6,7 +6,6 @@ use App\Application\Cards\Commands\UpdateCardCommand;
 use App\Domain\Cards\Entities\Card;
 use App\Domain\Cards\Exceptions\CardNotFoundException;
 use App\Domain\Cards\Repositories\CardRepository;
-use DateTimeImmutable;
 
 class UpdateCardHandler
 {
@@ -32,8 +31,6 @@ class UpdateCardHandler
             answer: $command->answer ?? $card->answer,
             keywords: $command->keywords ?? $card->keywords,
             createdBy: $command->createdBy,
-            createdAt: $card->createdAt,
-            updatedAt: new DateTimeImmutable(),
         );
 
         return $this->repository->update($updatedCard);

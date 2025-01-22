@@ -25,6 +25,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
     Route::group(['prefix' => 'deck-items'], function () {
         Route::get('{deckId}', 'DeckItemController@paginate')->name('api.v1.deck-items.paginate');
         Route::post('/', 'DeckItemController@create')->name('api.v1.deck-items.create');
+        Route::put('{deckItemId}/submit-review', 'StudyController@submitReview')->name('api.v1.deck-items.submit-revie');
         Route::put('{id}', 'DeckItemController@update')->name('api.v1.deck-items.update');
         Route::delete('{id}', 'DeckItemController@delete')->name('api.v1.deck-items.delete');
     });

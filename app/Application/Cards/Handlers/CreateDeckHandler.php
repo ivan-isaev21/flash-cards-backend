@@ -7,7 +7,6 @@ use App\Application\Cards\ValueObjects\DeckId;
 use App\Domain\Cards\Entities\Deck;
 use App\Domain\Cards\Exceptions\DeckWithNameAlreadyExistsException;
 use App\Domain\Cards\Repositories\DeckRepository;
-use DateTimeImmutable;
 
 class CreateDeckHandler
 {
@@ -29,9 +28,7 @@ class CreateDeckHandler
             locale: $command->locale,
             name: $command->name,
             type: $command->type,
-            createdBy: $command->createdBy,
-            createdAt: new DateTimeImmutable(),
-            updatedAt: new DateTimeImmutable(),
+            createdBy: $command->createdBy
         );
 
         return $this->repository->create($deck);

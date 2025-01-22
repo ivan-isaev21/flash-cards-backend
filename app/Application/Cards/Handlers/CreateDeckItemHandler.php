@@ -11,7 +11,6 @@ use App\Domain\Cards\Exceptions\DeckNotFoundException;
 use App\Domain\Cards\Repositories\CardRepository;
 use App\Domain\Cards\Repositories\DeckItemRepository;
 use App\Domain\Cards\Repositories\DeckRepository;
-use DateTimeImmutable;
 
 class CreateDeckItemHandler
 {
@@ -46,9 +45,7 @@ class CreateDeckItemHandler
         $deckItem = new DeckItem(
             id: DeckItemId::next(),
             deck: $deck,
-            card: $card,
-            createdAt: new DateTimeImmutable(),
-            updatedAt: new DateTimeImmutable(),
+            card: $card
         );
 
         return $this->repository->create($deckItem);

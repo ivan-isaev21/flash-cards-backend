@@ -16,8 +16,8 @@ class Deck
         public readonly Locale $locale,
         public readonly DeckType $type,
         public readonly UserId $createdBy,
-        public readonly DateTimeImmutable $createdAt,
-        public readonly DateTimeImmutable $updatedAt,
+        public readonly ?DateTimeImmutable $createdAt = null,
+        public readonly ?DateTimeImmutable $updatedAt = null,
     ) {}
 
     public function toArray(): array
@@ -28,8 +28,8 @@ class Deck
             'locale' => $this->locale->value,
             'type' => $this->type->value,
             'createdBy' => $this->createdBy->getValue(),
-            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'createdAt' => $this->createdAt != null ? $this->createdAt->format('Y-m-d H:i:s') : null,
+            'updatedAt' => $this->updatedAt != null ? $this->updatedAt->format('Y-m-d H:i:s') : null,
         ];
     }
 }

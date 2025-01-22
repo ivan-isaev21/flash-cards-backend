@@ -7,7 +7,6 @@ use App\Application\Cards\Commands\UpdateDeckCommand;
 use App\Domain\Cards\Entities\Deck;
 use App\Domain\Cards\Exceptions\DeckNotFoundException;
 use App\Domain\Cards\Repositories\DeckRepository;
-use DateTimeImmutable;
 
 class UpdateDeckHandler
 {
@@ -31,9 +30,7 @@ class UpdateDeckHandler
             locale: $command->locale ?? $deck->locale,
             name: $command->name ?? $deck->name,
             type: $command->type ?? $deck->type,
-            createdBy: $command->createdBy,
-            createdAt: $deck->createdAt,
-            updatedAt: new DateTimeImmutable(),
+            createdBy: $command->createdBy
         );
 
 

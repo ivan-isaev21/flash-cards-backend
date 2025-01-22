@@ -6,7 +6,6 @@ use App\Application\Cards\Commands\CreateCardCommand;
 use App\Application\Cards\ValueObjects\CardId;
 use App\Domain\Cards\Entities\Card;
 use App\Domain\Cards\Repositories\CardRepository;
-use DateTimeImmutable;
 
 class CreateCardHandler
 {
@@ -26,8 +25,6 @@ class CreateCardHandler
             answer: $command->answer,
             keywords: $command->keywords,
             createdBy: $command->createdBy,
-            createdAt: new DateTimeImmutable(),
-            updatedAt: new DateTimeImmutable(),
         );
 
         return  $this->repository->create($card);

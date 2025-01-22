@@ -88,12 +88,9 @@ class DeckItemControllerTest extends TestCase
         $response->assertJsonStructure($this->returnStructure);
     }
 
-    // public function test_can_delete_deck()
-    // {
-    //     $deck = Deck::factory()->create();
-    //     $response = $this->deleteJson(route('api.v1.decks.delete', ['id' => $deck->id]));
-    //     $response->assertStatus(Response::HTTP_NO_CONTENT);
-    // }
-
-
+    public function test_can_delete_deck_item()
+    {
+        $response = $this->deleteJson(route('api.v1.deck-items.delete', ['id' => $this->deckItem->id]));
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
 }
