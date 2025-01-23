@@ -4,11 +4,13 @@ namespace App\Domain\Cards\Repositories;
 
 use App\Application\Cards\ValueObjects\DeckId;
 use App\Application\Cards\ValueObjects\DeckItemId;
+use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\DeckItem;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DeckItemRepository
 {
+    public function findFirstUnstudiedDeckItem(DeckId $deckId, UserId $userId): ?DeckItem;
     public function paginate(DeckId $deckId, int $page, int $perPage): LengthAwarePaginator;
     public function create(DeckItem $deckItem): DeckItem;
     public function findDeckItemById(DeckItemId $id): ?DeckItem;

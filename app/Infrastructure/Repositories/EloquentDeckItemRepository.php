@@ -4,6 +4,7 @@ namespace App\Infrastructure\Repositories;
 
 use App\Application\Cards\ValueObjects\DeckId;
 use App\Application\Cards\ValueObjects\DeckItemId;
+use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Entities\DeckItem;
 use App\Domain\Cards\Repositories\DeckItemRepository;
 use App\Models\DeckItem as DeckItemModel;
@@ -12,6 +13,23 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentDeckItemRepository implements DeckItemRepository
 {
+    public function findFirstUnstudiedDeckItem(DeckId $deckId, UserId $userId): ?DeckItem
+    {
+        $model = DeckItemModel::where('deck_id', $deckId)
+            ->whereNotIn('id', function ($query) use ($userId) {
+                $query->select('deck_item_id')
+                    ->from('spaced_repetitions')
+                    ->where('user_id', $userId);
+            })
+            ->first();
+
+        if ($model === null) {
+            return null;
+        }
+
+        return $model->mapToEntity();
+    }
+
     public function paginate(DeckId $deckId, int $page, int $perPage): LengthAwarePaginator
     {
         $paginator = DeckItemModel::query()->where(['deck_id' => $deckId])->paginate($perPage, ['*'], 'page', $page);

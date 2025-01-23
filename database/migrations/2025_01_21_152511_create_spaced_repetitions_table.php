@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('spaced_repetitions', function (Blueprint $table) {
-            $table->uuid('id')->priamry();
+            $table->uuid('id')->primary();
             $table->uuid('deck_item_id');
             $table->foreign('deck_item_id')->references('id')->on('deck_items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->uuid('user_id');

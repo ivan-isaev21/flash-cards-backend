@@ -30,7 +30,7 @@ class SpacedRepetition
             'easiness' => $this->easiness,
             'repetition' => $this->repetition,
             'interval' => $this->interval,
-            'nextDate ' => $this->nextDate != null ? $this->createdAt->format('Y-m-d H:i:s') : null,
+            'nextDate' => $this->nextDate != null ? $this->createdAt->format('Y-m-d H:i:s') : null,
             'createdAt' => $this->createdAt != null ? $this->createdAt->format('Y-m-d H:i:s') : null,
             'updatedAt' => $this->updatedAt != null ? $this->updatedAt->format('Y-m-d H:i:s') : null,
         ];
