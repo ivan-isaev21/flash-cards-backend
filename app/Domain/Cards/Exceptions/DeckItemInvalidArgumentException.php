@@ -2,7 +2,9 @@
 
 namespace App\Domain\Cards\Exceptions;
 
-use App\Application\Cards\ValueObjects\DeckItemId;
+use InvalidArgumentException;
 use RuntimeException;
 
-class DeckItemInvalidArgumentException extends RuntimeException {}
+class DeckItemInvalidArgumentException extends InvalidArgumentException{
+
+}

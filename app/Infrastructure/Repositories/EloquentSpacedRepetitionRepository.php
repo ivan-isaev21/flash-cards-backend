@@ -10,7 +10,7 @@ use App\Domain\Cards\Entities\DeckItem;
 use App\Domain\Cards\Entities\SpacedRepetition;
 use App\Domain\Cards\Repositories\SpacedRepetitionRepository;
 use App\Models\SpacedRepetition as SpacedRepetitionModel;
-
+use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 
 class EloquentSpacedRepetitionRepository implements SpacedRepetitionRepository
@@ -18,7 +18,7 @@ class EloquentSpacedRepetitionRepository implements SpacedRepetitionRepository
     public function findFirstUnstudiedSpacedRepetition(DeckId $deckId, UserId $userId): ?SpacedRepetition
     {
         $model = SpacedRepetitionModel::where('user_id', $userId->getValue())
-            ->where('next_date', '<=', DB::raw('NOW()'))
+            ->where('next_date', '<=', new DateTimeImmutable())
             ->whereHas('deckItem', function ($query) use ($deckId) {
                 $query->whereHas('deck', function ($query) use ($deckId) {
                     $query->where('id', $deckId->getValue());
