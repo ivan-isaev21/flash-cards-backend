@@ -12,4 +12,6 @@ interface UserRepository
     public function findUserByEmail(Email $email): ?User;
     public function register(User $user): User;
     public function changePassword(UserId $id, string $password): User;
+    public function save(User $user): User;
+    public function generateToken(UserId $id, ?string $tokenName = null): string;
 }
