@@ -3,6 +3,7 @@
 namespace App\Domain\User\Entities;
 
 use App\Application\Shared\ValueObjects\Email;
+use App\Application\User\ValueObjects\Token;
 use App\Application\User\ValueObjects\UserId;
 use DateTimeImmutable;
 
@@ -13,6 +14,8 @@ class User
         public readonly string $name,
         public readonly Email $email,
         public readonly string $password,
+        public readonly ?DateTimeImmutable $emailVerifiedAt = null,
+        public readonly ?Token $verifiedToken = null,
         public readonly ?DateTimeImmutable $createdAt = null,
         public readonly ?DateTimeImmutable $updatedAt = null
     ) {}

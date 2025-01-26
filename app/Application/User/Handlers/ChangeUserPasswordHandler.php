@@ -3,6 +3,7 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\ChangeUserPasswordCommand;
+use App\Application\User\Contracts\PasswordHasher;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Repositories\UserRepository;
@@ -10,10 +11,12 @@ use App\Domain\User\Repositories\UserRepository;
 class ChangeUserPasswordHandler
 {
     private UserRepository $repository;
+    private PasswordHasher $passwordHasher;
 
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $repository, PasswordHasher $passwordHasher)
     {
         $this->repository = $repository;
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function handle(ChangeUserPasswordCommand $command): User
@@ -26,7 +29,7 @@ class ChangeUserPasswordHandler
 
         return $this->repository->changePassword(
             id: $user->id,
-            password: password_hash($command->password, PASSWORD_BCRYPT)
+            password: $this->passwordHasher->make($command->password)
         );
     }
 }

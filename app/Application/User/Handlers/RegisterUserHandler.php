@@ -4,6 +4,8 @@ namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\RegisterUserCommand;
 use App\Application\User\Contracts\PasswordHasher;
+use App\Application\User\Contracts\VerifyTokenGenerator;
+use App\Application\User\ValueObjects\Token;
 use App\Application\User\ValueObjects\UserId;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\UserInvalidArgumentException;
@@ -13,11 +15,13 @@ class RegisterUserHandler
 {
     private UserRepository $repository;
     private PasswordHasher $passwordHasher;
+    private VerifyTokenGenerator $verifyTokenGenerator;
 
-    public function __construct(UserRepository $repository, PasswordHasher $passwordHasher)
+    public function __construct(UserRepository $repository, PasswordHasher $passwordHasher, VerifyTokenGenerator $verifyTokenGenerator)
     {
         $this->repository = $repository;
         $this->passwordHasher = $passwordHasher;
+        $this->verifyTokenGenerator = $verifyTokenGenerator;
     }
 
     public function handle(RegisterUserCommand $command): User
@@ -30,7 +34,8 @@ class RegisterUserHandler
             id: UserId::next(),
             name: $command->name,
             email: $command->email,
-            password: $this->passwordHasher->make($command->password)
+            password: $this->passwordHasher->make($command->password),
+            verifiedToken: $this->verifyTokenGenerator->generate()
         ));
     }
 }

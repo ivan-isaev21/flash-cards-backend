@@ -2,14 +2,14 @@
 
 namespace App\Infrastructure;
 
-use App\Application\User\Contracts\TokenGenerator;
+use App\Application\User\Contracts\LoginTokenGenerator;
 use App\Application\User\ValueObjects\UserId;
 use App\Application\User\ValueObjects\Token;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Models\User as UserModel;
 use DateTimeImmutable;
 
-class SanctumTokenGenerator implements TokenGenerator
+class SanctumLoginTokenGenerator implements LoginTokenGenerator
 {
     public function generate(UserId $id): Token
     {

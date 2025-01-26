@@ -37,6 +37,11 @@ class Token
         return $this->expiredAt <= new DateTimeImmutable();
     }
 
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
     public function equals(Token $other): bool
     {
         return $this->getValue() == $other->getValue() && $this->type === $other->type;
