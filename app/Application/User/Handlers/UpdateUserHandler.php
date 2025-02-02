@@ -6,7 +6,9 @@ use App\Application\User\Commands\UpdateUserCommand;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\UserInvalidArgumentException;
 use App\Domain\User\Exceptions\UserNotFoundException;
+use App\Domain\User\Exceptions\UserNotVerifiedException;
 use App\Domain\User\Repositories\UserRepository;
+use DateTimeImmutable;
 
 class UpdateUserHandler
 {
@@ -25,15 +27,25 @@ class UpdateUserHandler
             throw new UserNotFoundException($command->id);
         }
 
+        if (!$user->isVerified()) {
+            throw new UserNotVerifiedException();
+        }
+
         if ($this->repository->findUserByEmail($command->email) !== null) {
             throw new UserInvalidArgumentException("User with email " . $command->email->getValue() . "already exists!");
         }
 
-        return $this->repository->save(new User(
+        $updatedUser = new User(
             id: $user->id,
             name: $command->name,
             email: $command->email,
-            password: $user->password
-        ));
+            password: $user->password,
+            emailVerifiedAt: $user->emailVerifiedAt,
+            verifiedToken: null,
+            createdAt: $user->createdAt,
+            updatedAt: new DateTimeImmutable()
+        );
+
+        return $this->repository->save($updatedUser);
     }
 }

@@ -7,9 +7,9 @@ use RuntimeException;
 
 class UserNotFoundException extends RuntimeException
 {
-    public function __construct(UserId $id)
+    public function __construct()
     {
-        $message = "User with id : " . $id->getValue() . 'does not exist!';
+        $message = "User does not exist!";
         parent::__construct($message);
     }
 }

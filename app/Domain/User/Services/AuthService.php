@@ -5,14 +5,18 @@ namespace App\Domain\User\Services;
 use App\Application\User\Commands\ChangeUserPasswordCommand;
 use App\Application\User\Commands\LoginUserCommand;
 use App\Application\User\Commands\RegisterUserCommand;
+use App\Application\User\Commands\RequestResetUserPasswordCommand;
 use App\Application\User\Commands\RequestUserEmailVerificationCommand;
+use App\Application\User\Commands\ResetUserPasswordCommand;
 use App\Application\User\Commands\UpdateUserCommand;
 use App\Application\User\Commands\VerifyUserEmailCommand;
 use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Application\User\Handlers\ChangeUserPasswordHandler;
 use App\Application\User\Handlers\LoginUserHandler;
 use App\Application\User\Handlers\RegisterUserHandler;
+use App\Application\User\Handlers\RequestResetUserPasswordHandler;
 use App\Application\User\Handlers\RequestUserEmailVerificationHandler;
+use App\Application\User\Handlers\ResetUserPasswordHandler;
 use App\Application\User\Handlers\UpdateUserHandler;
 use App\Application\User\Handlers\VerifyUserEmailHandler;
 use App\Domain\User\Entities\User;
@@ -20,6 +24,8 @@ use App\Domain\User\Events\UserEmailVerificationRequested;
 use App\Domain\User\Events\UserEmailVerified;
 use App\Domain\User\Events\UserLogined;
 use App\Domain\User\Events\UserPasswordChanged;
+use App\Domain\User\Events\UserPasswordReseted;
+use App\Domain\User\Events\UserPasswordResetRequested;
 use App\Domain\User\Events\UserRegistered;
 use App\Domain\User\Events\UserUpdated;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -33,6 +39,8 @@ class AuthService
     private LoginUserHandler $loginUserHandler;
     private VerifyUserEmailHandler $verifyUserEmailHandler;
     private RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler;
+    private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
+    private ResetUserPasswordHandler $resetUserPasswordHandler;
 
     public function __construct(
         Dispatcher $dispatcher,
@@ -41,7 +49,9 @@ class AuthService
         UpdateUserHandler $updateUserHandler,
         LoginUserHandler $loginUserHandler,
         VerifyUserEmailHandler $verifyUserEmailHandler,
-        RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler
+        RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler,
+        RequestResetUserPasswordHandler $requestResetUserPasswordHandler,
+        ResetUserPasswordHandler $resetUserPasswordHandler
     ) {
         $this->dispatcher = $dispatcher;
         $this->registerUserHandler = $registerUserHandler;
@@ -50,12 +60,28 @@ class AuthService
         $this->loginUserHandler = $loginUserHandler;
         $this->verifyUserEmailHandler = $verifyUserEmailHandler;
         $this->requestUserEmailVerificationHandler = $requestUserEmailVerificationHandler;
+        $this->requestResetUserPasswordHandler = $requestResetUserPasswordHandler;
+        $this->resetUserPasswordHandler = $resetUserPasswordHandler;
     }
 
     public function register(RegisterUserCommand $command): User
     {
         $user = $this->registerUserHandler->handle($command);
         $this->dispatcher->dispatch(new UserRegistered($user->id));
+        return $user;
+    }
+
+    public function requestResetPassword(RequestResetUserPasswordCommand $command): User
+    {
+        $user = $this->requestResetUserPasswordHandler->handle($command);
+        $this->dispatcher->dispatch(new UserPasswordResetRequested($user->id));
+        return $user;
+    }
+
+    public function resetPassword(ResetUserPasswordCommand $command): User
+    {
+        $user = $this->resetUserPasswordHandler->handle($command);
+        $this->dispatcher->dispatch(new UserPasswordReseted($user->id));
         return $user;
     }
 

@@ -20,6 +20,11 @@ class User
         public readonly ?DateTimeImmutable $updatedAt = null
     ) {}
 
+    public function isVerified(): bool
+    {
+        return $this->emailVerifiedAt !== null;
+    }
+
     public function toArray(): array
     {
         return [

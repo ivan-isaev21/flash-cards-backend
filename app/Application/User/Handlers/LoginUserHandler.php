@@ -3,6 +3,7 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\LoginUserCommand;
+use App\Application\User\Contracts\LoginTokenGenerator;
 use App\Application\User\Contracts\PasswordHasher;
 use App\Application\User\Contracts\TokenGenerator;
 use App\Application\User\DataTransferObjects\LoginedUserData;
@@ -13,9 +14,9 @@ class LoginUserHandler
 {
     private UserRepository $repository;
     private PasswordHasher $passwordHasher;
-    private TokenGenerator $tokenGenerator;
+    private LoginTokenGenerator $tokenGenerator;
 
-    public function __construct(UserRepository $repository, PasswordHasher $passwordHasher, TokenGenerator $tokenGenerator)
+    public function __construct(UserRepository $repository, PasswordHasher $passwordHasher, LoginTokenGenerator $tokenGenerator)
     {
         $this->repository = $repository;
         $this->passwordHasher = $passwordHasher;

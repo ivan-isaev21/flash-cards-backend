@@ -42,6 +42,17 @@ class VerifyUserEmailHandler
             throw new InvalidVerifyTokenException();
         }
 
-        return $this->repository->verifyEmail(id: $user->id, emailVerifiedAt: new DateTimeImmutable());
+        $updatedUser = new User(
+            id: $user->id,
+            name: $user->name,
+            email: $user->email,
+            password: $user->password,
+            emailVerifiedAt: new DateTimeImmutable(),
+            verifiedToken: null,
+            createdAt: $user->createdAt,
+            updatedAt: new DateTimeImmutable()
+        );
+
+        return $this->repository->save($updatedUser);
     }
 }

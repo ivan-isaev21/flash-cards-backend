@@ -2,15 +2,16 @@
 
 namespace App\Application\User\Handlers;
 
-use App\Application\User\Commands\RequestUserEmailVerificationCommand;
+use App\Application\User\Commands\RequestResetUserPasswordCommand;
 use App\Application\User\Contracts\VerifyTokenGenerator;
 use App\Domain\User\Entities\User;
-use App\Domain\User\Exceptions\TooManyAttemptsRequestVerifyUserEmailException;
+use App\Domain\User\Exceptions\TooManyAttemptsRequestResetUserPasswordException;
 use App\Domain\User\Exceptions\UserNotFoundException;
+use App\Domain\User\Exceptions\UserNotVerifiedException;
 use App\Domain\User\Repositories\UserRepository;
 use DateTimeImmutable;
 
-class RequestUserEmailVerificationHandler
+class RequestResetUserPasswordHandler
 {
     private UserRepository $repository;
     private VerifyTokenGenerator $verifyTokenGenerator;
@@ -21,18 +22,22 @@ class RequestUserEmailVerificationHandler
         $this->verifyTokenGenerator = $verifyTokenGenerator;
     }
 
-    public function handle(RequestUserEmailVerificationCommand $command): User
+    public function handle(RequestResetUserPasswordCommand $command): User
     {
-        $user = $this->repository->findUserById($command->id);
+        $user = $this->repository->findUserByEmail($command->email);
 
         if ($user === null) {
-            throw new UserNotFoundException($command->id);
+            throw new UserNotFoundException();
+        }
+
+        if (!$user->isVerified()) {
+            throw new UserNotVerifiedException();
         }
 
         $nextAttempt = $user->verifiedToken->getCreatedAt()->modify("+1 hour");
 
         if ($user->verifiedToken !== null && $nextAttempt >= new DateTimeImmutable()) {
-            throw new TooManyAttemptsRequestVerifyUserEmailException();
+            throw new TooManyAttemptsRequestResetUserPasswordException();
         }
 
         $newVerifyToken = $this->verifyTokenGenerator->generate();

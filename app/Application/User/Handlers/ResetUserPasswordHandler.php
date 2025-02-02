@@ -2,15 +2,16 @@
 
 namespace App\Application\User\Handlers;
 
-use App\Application\User\Commands\ChangeUserPasswordCommand;
+use App\Application\User\Commands\ResetUserPasswordCommand;
 use App\Application\User\Contracts\PasswordHasher;
 use App\Domain\User\Entities\User;
+use App\Domain\User\Exceptions\InvalidVerifyTokenException;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Exceptions\UserNotVerifiedException;
 use App\Domain\User\Repositories\UserRepository;
 use DateTimeImmutable;
 
-class ChangeUserPasswordHandler
+class ResetUserPasswordHandler
 {
     private UserRepository $repository;
     private PasswordHasher $passwordHasher;
@@ -21,16 +22,20 @@ class ChangeUserPasswordHandler
         $this->passwordHasher = $passwordHasher;
     }
 
-    public function handle(ChangeUserPasswordCommand $command): User
+    public function handle(ResetUserPasswordCommand $command): User
     {
-        $user = $this->repository->findUserById($command->id);
+        $user = $this->repository->findUserByEmail($command->email);
 
         if ($user === null) {
-            throw new UserNotFoundException($command->id);
+            throw new UserNotFoundException();
         }
 
         if (!$user->isVerified()) {
             throw new UserNotVerifiedException();
+        }
+
+        if (!$user->verifiedToken->equals($command->token) || $user->verifiedToken->isExpired()) {
+            throw new InvalidVerifyTokenException();
         }
 
         $updatedUser = new User(
