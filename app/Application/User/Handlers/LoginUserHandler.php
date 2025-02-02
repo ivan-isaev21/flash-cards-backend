@@ -3,10 +3,9 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\LoginUserCommand;
-use App\Application\User\Contracts\LoginTokenGenerator;
-use App\Application\User\Contracts\PasswordHasher;
-use App\Application\User\Contracts\TokenGenerator;
 use App\Application\User\DataTransferObjects\LoginedUserData;
+use App\Domain\User\Contracts\LoginTokenGenerator;
+use App\Domain\User\Contracts\PasswordHasher;
 use App\Domain\User\Exceptions\UserInvalidCredentialsException;
 use App\Domain\User\Repositories\UserRepository;
 

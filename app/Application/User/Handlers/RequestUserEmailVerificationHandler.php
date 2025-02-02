@@ -3,7 +3,7 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\RequestUserEmailVerificationCommand;
-use App\Application\User\Contracts\VerifyTokenGenerator;
+use App\Domain\User\Contracts\VerifyTokenGenerator;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\TooManyAttemptsRequestVerifyUserEmailException;
 use App\Domain\User\Exceptions\UserNotFoundException;

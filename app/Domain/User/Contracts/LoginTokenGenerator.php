@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\User\Contracts;
+namespace App\Domain\User\Contracts;
 
 use App\Application\User\ValueObjects\Token;
 use App\Application\User\ValueObjects\UserId;

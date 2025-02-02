@@ -3,9 +3,10 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\RegisterUserCommand;
-use App\Application\User\Contracts\PasswordHasher;
-use App\Application\User\Contracts\VerifyTokenGenerator;
+
 use App\Application\User\ValueObjects\UserId;
+use App\Domain\User\Contracts\PasswordHasher;
+use App\Domain\User\Contracts\VerifyTokenGenerator;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\UserInvalidArgumentException;
 use App\Domain\User\Repositories\UserRepository;

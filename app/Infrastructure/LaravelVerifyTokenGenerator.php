@@ -2,8 +2,8 @@
 
 namespace App\Infrastructure;
 
-use App\Application\User\Contracts\VerifyTokenGenerator;
 use App\Application\User\ValueObjects\Token;
+use App\Domain\User\Contracts\VerifyTokenGenerator;
 use DateTimeImmutable;
 
 class LaravelVerifyTokenGenerator implements VerifyTokenGenerator

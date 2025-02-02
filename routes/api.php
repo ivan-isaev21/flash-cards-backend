@@ -33,4 +33,10 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
         Route::get('{deckId}/get-card-to-review', 'StudyController@getCardToReview')->name('api.v1.study.getCardToReview');
         Route::put('{deckItemId}/submit-review', 'StudyController@submitReview')->name('api.v1.study.submitReview');
     });
+
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('register', 'AuthController@register')->name('api.v1.auth.register');
+        Route::put('request-reset-password', 'AuthController@requestResetPassword')->name('api.v1.auth.requestResetPassword');
+        Route::put('reset-password', 'AuthController@resetPassword')->name('api.v1.auth.resetPassword');
+    });
 });

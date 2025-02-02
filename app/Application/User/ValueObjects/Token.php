@@ -9,7 +9,7 @@ class Token
     private string $value;
     private string $type;
     private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $expiredAt;
+    private ?DateTimeImmutable $expiredAt;
 
     public function __construct(
         string $value,
@@ -44,7 +44,7 @@ class Token
 
     public function equals(Token $other): bool
     {
-        return $this->getValue() == $other->getValue() && $this->type === $other->type;
+        return $this->getValue() === $other->getValue() && $this->type === $other->type;
     }
 
     public function __toString(): string

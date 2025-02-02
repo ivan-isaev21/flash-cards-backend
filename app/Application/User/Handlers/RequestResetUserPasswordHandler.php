@@ -3,7 +3,7 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\RequestResetUserPasswordCommand;
-use App\Application\User\Contracts\VerifyTokenGenerator;
+use App\Domain\User\Contracts\VerifyTokenGenerator;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\TooManyAttemptsRequestResetUserPasswordException;
 use App\Domain\User\Exceptions\UserNotFoundException;
@@ -33,11 +33,13 @@ class RequestResetUserPasswordHandler
         if (!$user->isVerified()) {
             throw new UserNotVerifiedException();
         }
+        if ($user->verifiedToken !== null) {
 
-        $nextAttempt = $user->verifiedToken->getCreatedAt()->modify("+1 hour");
+            $nextAttempt = $user->verifiedToken->getCreatedAt()->modify("+1 hour");
 
-        if ($user->verifiedToken !== null && $nextAttempt >= new DateTimeImmutable()) {
-            throw new TooManyAttemptsRequestResetUserPasswordException();
+            if ($nextAttempt >= new DateTimeImmutable()) {
+                throw new TooManyAttemptsRequestResetUserPasswordException();
+            }
         }
 
         $newVerifyToken = $this->verifyTokenGenerator->generate();

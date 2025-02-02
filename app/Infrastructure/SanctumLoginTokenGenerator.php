@@ -2,9 +2,10 @@
 
 namespace App\Infrastructure;
 
-use App\Application\User\Contracts\LoginTokenGenerator;
+
 use App\Application\User\ValueObjects\UserId;
 use App\Application\User\ValueObjects\Token;
+use App\Domain\User\Contracts\LoginTokenGenerator;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Models\User as UserModel;
 use DateTimeImmutable;

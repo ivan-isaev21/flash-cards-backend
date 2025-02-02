@@ -3,11 +3,13 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\ResetUserPasswordCommand;
-use App\Application\User\Contracts\PasswordHasher;
+use App\Application\User\ValueObjects\Token;
+use App\Domain\User\Contracts\PasswordHasher;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\InvalidVerifyTokenException;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Exceptions\UserNotVerifiedException;
+use App\Domain\User\Exceptions\VerifyTokenExpiredException;
 use App\Domain\User\Repositories\UserRepository;
 use DateTimeImmutable;
 
@@ -34,7 +36,17 @@ class ResetUserPasswordHandler
             throw new UserNotVerifiedException();
         }
 
-        if (!$user->verifiedToken->equals($command->token) || $user->verifiedToken->isExpired()) {
+        if ($user->verifiedToken === null || $user->verifiedToken->isExpired()) {
+            throw new VerifyTokenExpiredException();
+        }
+
+        $requestVerifyToken = new Token(
+            value: $command->token,
+            type: 'verify-token',
+            createdAt: new DateTimeImmutable()
+        );
+
+        if (!$user->verifiedToken->equals($requestVerifyToken)) {
             throw new InvalidVerifyTokenException();
         }
 

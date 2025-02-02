@@ -3,7 +3,7 @@
 namespace App\Application\User\Handlers;
 
 use App\Application\User\Commands\ChangeUserPasswordCommand;
-use App\Application\User\Contracts\PasswordHasher;
+use App\Domain\User\Contracts\PasswordHasher;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Exceptions\UserNotVerifiedException;
