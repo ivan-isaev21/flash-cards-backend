@@ -5,6 +5,7 @@ namespace Tests\Unit\Domain\User\Services;
 use App\Application\Shared\ValueObjects\Email;
 use App\Application\User\Commands\ChangeUserPasswordCommand;
 use App\Application\User\Commands\LoginUserCommand;
+use App\Application\User\Commands\LogoutUserCommand;
 use App\Application\User\Commands\RegisterUserCommand;
 use App\Application\User\Commands\RequestResetUserPasswordCommand;
 use App\Application\User\Commands\RequestUserEmailVerificationCommand;
@@ -15,6 +16,7 @@ use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Application\User\Handlers\ChangeUserPasswordHandler;
 use App\Application\User\Handlers\GetUserHandler;
 use App\Application\User\Handlers\LoginUserHandler;
+use App\Application\User\Handlers\LogoutUserHandler;
 use App\Application\User\Handlers\RegisterUserHandler;
 use App\Application\User\Handlers\RequestResetUserPasswordHandler;
 use App\Application\User\Handlers\RequestUserEmailVerificationHandler;
@@ -38,6 +40,7 @@ use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Events\Dispatcher;
 
 use Mockery;
+use SebastianBergmann\Type\VoidType;
 
 class UserServiceTest extends TestCase
 {
@@ -51,6 +54,7 @@ class UserServiceTest extends TestCase
     private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
     private ResetUserPasswordHandler $resetUserPasswordHandler;
     private GetUserHandler $getUserHandler;
+    private LogoutUserHandler $logoutUserHandler;
     private UserService $service;
     private User $user;
     private Token $token;
@@ -68,6 +72,7 @@ class UserServiceTest extends TestCase
         $this->requestResetUserPasswordHandler = Mockery::mock(RequestResetUserPasswordHandler::class);
         $this->resetUserPasswordHandler = Mockery::mock(ResetUserPasswordHandler::class);
         $this->getUserHandler = Mockery::mock(GetUserHandler::class);
+        $this->logoutUserHandler = Mockery::mock(LogoutUserHandler::class);
         $this->token = Mockery::mock(Token::class);
         $this->service = new UserService(
             dispatcher: $this->dispatcher,
@@ -79,7 +84,8 @@ class UserServiceTest extends TestCase
             requestUserEmailVerificationHandler: $this->requestUserEmailVerificationHandler,
             requestResetUserPasswordHandler: $this->requestResetUserPasswordHandler,
             resetUserPasswordHandler: $this->resetUserPasswordHandler,
-            getUserHandler: $this->getUserHandler
+            getUserHandler: $this->getUserHandler,
+            logoutUserHandler: $this->logoutUserHandler
         );
         $this->user = $this->buildUser();
     }
@@ -340,7 +346,6 @@ class UserServiceTest extends TestCase
          */
         $handler = $this->getUserHandler;
 
-
         $handler->shouldReceive('handle')
             ->once()
             ->with($query)
@@ -349,5 +354,23 @@ class UserServiceTest extends TestCase
         $result = $this->service->show($query);
 
         $this->assertEquals($this->user, $result);
+    }
+
+    public function test_logout()
+    {
+        $command = new LogoutUserCommand(id: $this->user->id, token: 'token');
+
+        /**
+         * @var \Mockery\MockInterface
+         */
+        $handler = $this->logoutUserHandler;
+
+        $handler->shouldReceive('handle')
+            ->once()
+            ->with($command)
+            ->andReturn(true);
+
+        $result = $this->service->logout($command);
+        $this->assertTrue($result);
     }
 }

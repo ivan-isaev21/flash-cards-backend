@@ -45,6 +45,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
 
     Route::group(['prefix' => 'auth'], function () {
         Route::post('login', 'AuthController@login')->name('api.v1.auth.login');
+        Route::post('logout', 'AuthController@logout')->name('api.v1.auth.logout');
         Route::post('register', 'AuthController@register')->name('api.v1.auth.register');
         Route::put('request-reset-password', 'AuthController@requestResetPassword')->name('api.v1.auth.requestResetPassword');
         Route::put('reset-password', 'AuthController@resetPassword')->name('api.v1.auth.resetPassword');
@@ -53,7 +54,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
     });
 
     Route::group(['prefix' => 'me', 'middleware' => ['auth:sanctum']], function () {
-        Route::get('', 'MeController@show')->name('api.v1.me.show');
+        Route::get('/', 'MeController@show')->name('api.v1.me.show');
         Route::put('change-password', 'MeController@changePassword')->name('api.v1.me.changePassword');
         Route::put('update', 'MeController@update')->name('api.v1.me.update');
     });

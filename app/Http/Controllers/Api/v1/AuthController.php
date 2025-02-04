@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Application\User\Commands\LogoutUserCommand;
 use App\Application\User\ValueObjects\UserId;
 use App\Domain\User\Services\UserService;
 use App\Http\Controllers\Controller;
@@ -36,6 +37,12 @@ class AuthController extends Controller
     {
         $userData = $this->service->login($request->getLoginUserCommand());
         return response(new LoginedUserResource($userData), Response::HTTP_OK);
+    }
+
+    public function logout(Request $request): Response
+    {
+        $this->service->logout(new LogoutUserCommand(id: new UserId($request->user()->id), token: $request->user()->currentAccessToken()));
+        return response(['message' => 'Success logout!'], Response::HTTP_OK);
     }
 
     public function requestResetPassword(RequestResetPasswordRequest $request): Response

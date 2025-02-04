@@ -4,6 +4,7 @@ namespace App\Domain\User\Services;
 
 use App\Application\User\Commands\ChangeUserPasswordCommand;
 use App\Application\User\Commands\LoginUserCommand;
+use App\Application\User\Commands\LogoutUserCommand;
 use App\Application\User\Commands\RegisterUserCommand;
 use App\Application\User\Commands\RequestResetUserPasswordCommand;
 use App\Application\User\Commands\RequestUserEmailVerificationCommand;
@@ -14,6 +15,7 @@ use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Application\User\Handlers\ChangeUserPasswordHandler;
 use App\Application\User\Handlers\GetUserHandler;
 use App\Application\User\Handlers\LoginUserHandler;
+use App\Application\User\Handlers\LogoutUserHandler;
 use App\Application\User\Handlers\RegisterUserHandler;
 use App\Application\User\Handlers\RequestResetUserPasswordHandler;
 use App\Application\User\Handlers\RequestUserEmailVerificationHandler;
@@ -44,6 +46,7 @@ class UserService
     private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
     private ResetUserPasswordHandler $resetUserPasswordHandler;
     private GetUserHandler $getUserHandler;
+    private LogoutUserHandler $logoutUserHandler;
 
     public function __construct(
         Dispatcher $dispatcher,
@@ -55,7 +58,8 @@ class UserService
         RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler,
         RequestResetUserPasswordHandler $requestResetUserPasswordHandler,
         ResetUserPasswordHandler $resetUserPasswordHandler,
-        GetUserHandler $getUserHandler
+        GetUserHandler $getUserHandler,
+        LogoutUserHandler $logoutUserHandler
     ) {
         $this->dispatcher = $dispatcher;
         $this->registerUserHandler = $registerUserHandler;
@@ -67,6 +71,7 @@ class UserService
         $this->requestResetUserPasswordHandler = $requestResetUserPasswordHandler;
         $this->resetUserPasswordHandler = $resetUserPasswordHandler;
         $this->getUserHandler = $getUserHandler;
+        $this->logoutUserHandler = $logoutUserHandler;
     }
 
     public function show(GetUserQuery $query): User
@@ -114,6 +119,11 @@ class UserService
         $loginedUserData = $this->loginUserHandler->handle($command);
         $this->dispatcher->dispatch(new UserLogined($loginedUserData->user->id));
         return $loginedUserData;
+    }
+
+    public function logout(LogoutUserCommand $command): bool
+    {
+       return $this->logoutUserHandler->handle($command);
     }
 
     public function requestEmailVerification(RequestUserEmailVerificationCommand $command): bool

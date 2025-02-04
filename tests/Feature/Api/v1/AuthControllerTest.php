@@ -12,7 +12,7 @@ class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_register_user()
+    public function test_can_register_user(): void
     {
         $fakeData = User::factory()->make();
 
@@ -28,7 +28,7 @@ class AuthControllerTest extends TestCase
         $response->assertJson(['message' => 'You success registered!']);
     }
 
-    public function test_can_login_user()
+    public function test_can_login_user(): void
     {
         $password = 'password';
 
@@ -51,7 +51,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    public function test_can_request_reset_password()
+    public function test_can_request_reset_password(): void
     {
         $fakeData = User::factory()->create();
 
@@ -64,7 +64,7 @@ class AuthControllerTest extends TestCase
         $response->assertJson(['message' => 'If user with this email exists we send email!']);
     }
 
-    public function test_can_reset_password()
+    public function test_can_reset_password(): void
     {
         $fakeData = User::factory()->withVerifiedToken()->create();
 
@@ -80,7 +80,7 @@ class AuthControllerTest extends TestCase
         $response->assertJson(['message' => 'Password success changed!']);
     }
 
-    public function test_can_request_email_verification()
+    public function test_can_request_email_verification(): void
     {
         $fakeData = User::factory()->create();
 
@@ -95,15 +95,13 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    public function test_can_verify_email()
+    public function test_can_verify_email(): void
     {
         $fakeData = User::factory()->withVerifiedToken()->create();
 
         $userData = [
-
             'email' => $fakeData->email,
             'token' => $fakeData->verified_token['value']
-
         ];
 
         $response = $this->get(route('api.v1.auth.verifyEmail', $userData));

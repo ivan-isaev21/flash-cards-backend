@@ -24,4 +24,26 @@ class SanctumLoginTokenGenerator implements LoginTokenGenerator
 
         return new Token(value: $token, type: 'Bearer', createdAt: new DateTimeImmutable('now'));
     }
+
+    public function delete(UserId $id, string $token): void
+    {
+        $user = UserModel::find($id->getValue());
+
+        if ($user === null) {
+            throw new UserNotFoundException($id);
+        }
+
+        $user->tokens()->where('token', $token)->delete();
+    }
+
+    public function deleteAll(UserId $id): void
+    {
+        $user = UserModel::find($id->getValue());
+
+        if ($user === null) {
+            throw new UserNotFoundException($id);
+        }
+
+        $user->tokens()->delete();
+    }
 }
