@@ -12,6 +12,7 @@ use App\Application\User\Commands\UpdateUserCommand;
 use App\Application\User\Commands\VerifyUserEmailCommand;
 use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Application\User\Handlers\ChangeUserPasswordHandler;
+use App\Application\User\Handlers\GetUserHandler;
 use App\Application\User\Handlers\LoginUserHandler;
 use App\Application\User\Handlers\RegisterUserHandler;
 use App\Application\User\Handlers\RequestResetUserPasswordHandler;
@@ -19,6 +20,7 @@ use App\Application\User\Handlers\RequestUserEmailVerificationHandler;
 use App\Application\User\Handlers\ResetUserPasswordHandler;
 use App\Application\User\Handlers\UpdateUserHandler;
 use App\Application\User\Handlers\VerifyUserEmailHandler;
+use App\Application\User\Queries\GetUserQuery;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Events\UserEmailVerificationRequested;
 use App\Domain\User\Events\UserEmailVerified;
@@ -41,6 +43,7 @@ class UserService
     private RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler;
     private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
     private ResetUserPasswordHandler $resetUserPasswordHandler;
+    private GetUserHandler $getUserHandler;
 
     public function __construct(
         Dispatcher $dispatcher,
@@ -51,7 +54,8 @@ class UserService
         VerifyUserEmailHandler $verifyUserEmailHandler,
         RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler,
         RequestResetUserPasswordHandler $requestResetUserPasswordHandler,
-        ResetUserPasswordHandler $resetUserPasswordHandler
+        ResetUserPasswordHandler $resetUserPasswordHandler,
+        GetUserHandler $getUserHandler
     ) {
         $this->dispatcher = $dispatcher;
         $this->registerUserHandler = $registerUserHandler;
@@ -62,6 +66,12 @@ class UserService
         $this->requestUserEmailVerificationHandler = $requestUserEmailVerificationHandler;
         $this->requestResetUserPasswordHandler = $requestResetUserPasswordHandler;
         $this->resetUserPasswordHandler = $resetUserPasswordHandler;
+        $this->getUserHandler = $getUserHandler;
+    }
+
+    public function show(GetUserQuery $query): User
+    {
+        return $this->getUserHandler->handle($query);
     }
 
     public function register(RegisterUserCommand $command): User

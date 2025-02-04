@@ -43,8 +43,9 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\v1'], 
         Route::get('verify-email', 'AuthController@verifyEmail')->name('api.v1.auth.verifyEmail');
     });
 
-
     Route::group(['prefix' => 'me', 'middleware' => ['auth:sanctum']], function () {
-        Route::put('change-password', 'AuthController@changePassword')->name('api.v1.auth.changePassword');
+        Route::get('', 'MeController@show')->name('api.v1.me.show');
+        Route::put('change-password', 'MeController@changePassword')->name('api.v1.me.changePassword');
+        Route::put('update', 'MeController@update')->name('api.v1.me.update');
     });
 });

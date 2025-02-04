@@ -13,6 +13,7 @@ use App\Application\User\Commands\UpdateUserCommand;
 use App\Application\User\Commands\VerifyUserEmailCommand;
 use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Application\User\Handlers\ChangeUserPasswordHandler;
+use App\Application\User\Handlers\GetUserHandler;
 use App\Application\User\Handlers\LoginUserHandler;
 use App\Application\User\Handlers\RegisterUserHandler;
 use App\Application\User\Handlers\RequestResetUserPasswordHandler;
@@ -20,6 +21,7 @@ use App\Application\User\Handlers\RequestUserEmailVerificationHandler;
 use App\Application\User\Handlers\ResetUserPasswordHandler;
 use App\Application\User\Handlers\UpdateUserHandler;
 use App\Application\User\Handlers\VerifyUserEmailHandler;
+use App\Application\User\Queries\GetUserQuery;
 use App\Application\User\ValueObjects\Token;
 use App\Application\User\ValueObjects\UserId;
 use App\Domain\User\Entities\User;
@@ -48,6 +50,7 @@ class UserServiceTest extends TestCase
     private RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler;
     private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
     private ResetUserPasswordHandler $resetUserPasswordHandler;
+    private GetUserHandler $getUserHandler;
     private UserService $service;
     private User $user;
     private Token $token;
@@ -64,6 +67,7 @@ class UserServiceTest extends TestCase
         $this->requestUserEmailVerificationHandler = Mockery::mock(RequestUserEmailVerificationHandler::class);
         $this->requestResetUserPasswordHandler = Mockery::mock(RequestResetUserPasswordHandler::class);
         $this->resetUserPasswordHandler = Mockery::mock(ResetUserPasswordHandler::class);
+        $this->getUserHandler = Mockery::mock(GetUserHandler::class);
         $this->token = Mockery::mock(Token::class);
         $this->service = new UserService(
             dispatcher: $this->dispatcher,
@@ -74,7 +78,8 @@ class UserServiceTest extends TestCase
             verifyUserEmailHandler: $this->verifyUserEmailHandler,
             requestUserEmailVerificationHandler: $this->requestUserEmailVerificationHandler,
             requestResetUserPasswordHandler: $this->requestResetUserPasswordHandler,
-            resetUserPasswordHandler: $this->resetUserPasswordHandler
+            resetUserPasswordHandler: $this->resetUserPasswordHandler,
+            getUserHandler: $this->getUserHandler
         );
         $this->user = $this->buildUser();
     }
@@ -322,6 +327,26 @@ class UserServiceTest extends TestCase
             ->with(Mockery::type(UserPasswordReseted::class));
 
         $result = $this->service->resetPassword($command);
+
+        $this->assertEquals($this->user, $result);
+    }
+
+    public function test_show()
+    {
+        $query = new GetUserQuery(id: $this->user->id);
+
+        /**
+         * @var \Mockery\MockInterface
+         */
+        $handler = $this->getUserHandler;
+
+
+        $handler->shouldReceive('handle')
+            ->once()
+            ->with($query)
+            ->andReturn($this->user);
+
+        $result = $this->service->show($query);
 
         $this->assertEquals($this->user, $result);
     }

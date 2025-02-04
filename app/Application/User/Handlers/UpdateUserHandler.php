@@ -31,8 +31,10 @@ class UpdateUserHandler
             throw new UserNotVerifiedException();
         }
 
-        if ($this->repository->findUserByEmail($command->email) !== null) {
-            throw new UserInvalidArgumentException("User with email " . $command->email->getValue() . "already exists!");
+        $emailUser = $this->repository->findUserByEmail($command->email);
+
+        if ($emailUser !== null && !$emailUser->id->equals($user->id)) {
+            throw new UserInvalidArgumentException("User with email " . $command->email->getValue() . " already exists!");
         }
 
         $updatedUser = new User(

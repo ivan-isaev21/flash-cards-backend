@@ -61,10 +61,4 @@ class AuthController extends Controller
         $this->service->verifyEmail($request->getVerifyUserEmailCommand());
         return response(['message' => 'Email success verified!'], Response::HTTP_ACCEPTED);
     }
-
-    public function changePassword(ChangeUserPasswordRequest $request)
-    {
-        $user = $this->service->changePassword($request->getChangeUserPasswordCommand(new UserId($request->user()->id)));
-        return response(new UserResource($user), Response::HTTP_ACCEPTED);
-    }
 }
