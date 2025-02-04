@@ -30,7 +30,7 @@ use App\Domain\User\Events\UserRegistered;
 use App\Domain\User\Events\UserUpdated;
 use Illuminate\Contracts\Events\Dispatcher;
 
-class AuthService
+class UserService
 {
     private Dispatcher $dispatcher;
     private RegisterUserHandler $registerUserHandler;
@@ -106,11 +106,16 @@ class AuthService
         return $loginedUserData;
     }
 
-    public function requestVerifyEmail(RequestUserEmailVerificationCommand $command): User
+    public function requestEmailVerification(RequestUserEmailVerificationCommand $command): bool
     {
         $user = $this->requestUserEmailVerificationHandler->handle($command);
-        $this->dispatcher->dispatch(new UserEmailVerificationRequested($user->id));
-        return $user;
+
+        if ($user != null) {
+            $this->dispatcher->dispatch(new UserEmailVerificationRequested($user->id));
+            return true;
+        }
+
+        return false;
     }
 
     public function verifyEmail(VerifyUserEmailCommand $command): User

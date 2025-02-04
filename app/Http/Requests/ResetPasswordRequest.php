@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use App\Application\Shared\ValueObjects\Email;
 use App\Application\User\Commands\ResetUserPasswordCommand;
+use App\Infrastructure\PasswordSettings;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
 class ResetPasswordRequest extends FormRequest
 {
@@ -30,12 +30,7 @@ class ResetPasswordRequest extends FormRequest
             'password' => [
                 'required',
                 'confirmed',
-                Password::min(8)                  // Минимальная длина
-                    ->letters()             // Должны быть буквы
-                    ->mixedCase()          // Должны быть буквы в разном регистре
-                    ->numbers()            // Должны присутствовать цифры
-                    ->symbols()            // Должны присутствовать символы
-                    ->uncompromised(),     // Проверка на утечки (haveibeenpwned)
+                PasswordSettings::make()
             ],
         ];
     }

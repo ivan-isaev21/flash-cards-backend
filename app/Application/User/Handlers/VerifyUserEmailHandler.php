@@ -22,10 +22,10 @@ class VerifyUserEmailHandler
 
     public function handle(VerifyUserEmailCommand $command): User
     {
-        $user = $this->repository->findUserById($command->id);
+        $user = $this->repository->findUserByEmail($command->email);
 
         if ($user === null) {
-            throw new UserNotFoundException($command->id);
+            throw new UserNotFoundException();
         }
 
         if ($user->verifiedToken === null || $user->verifiedToken->isExpired()) {

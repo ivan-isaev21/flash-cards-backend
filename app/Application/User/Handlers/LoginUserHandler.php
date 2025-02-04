@@ -7,6 +7,7 @@ use App\Application\User\DataTransferObjects\LoginedUserData;
 use App\Domain\User\Contracts\LoginTokenGenerator;
 use App\Domain\User\Contracts\PasswordHasher;
 use App\Domain\User\Exceptions\UserInvalidCredentialsException;
+use App\Domain\User\Exceptions\UserNotVerifiedException;
 use App\Domain\User\Repositories\UserRepository;
 
 class LoginUserHandler
@@ -25,6 +26,14 @@ class LoginUserHandler
     public function handle(LoginUserCommand $command): LoginedUserData
     {
         $user = $this->repository->findUserByEmail($command->email);
+
+        if ($user === null) {
+            throw new UserInvalidCredentialsException();
+        }
+
+        if (!$user->isVerified()) {
+            throw new UserNotVerifiedException();
+        }
 
         if ($user === null || !$this->passwordHasher->verify(password: $command->password, hash: $user->password)) {
             throw new UserInvalidCredentialsException();

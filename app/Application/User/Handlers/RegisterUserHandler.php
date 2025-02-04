@@ -28,7 +28,7 @@ class RegisterUserHandler
     public function handle(RegisterUserCommand $command): User
     {
         if ($this->repository->findUserByEmail($command->email) !== null) {
-            throw new UserInvalidArgumentException("User with email " . $command->email->getValue() . "already exists!");
+            throw new UserInvalidArgumentException("User with email " . $command->email->getValue() . " already exists!");
         }
 
         $user = new User(

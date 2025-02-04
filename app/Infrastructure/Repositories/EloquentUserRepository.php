@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentUserRepository implements UserRepository
 {
-
     public function findUserById(UserId $id): ?User
     {
         $userModel = UserModel::find($id->getValue());

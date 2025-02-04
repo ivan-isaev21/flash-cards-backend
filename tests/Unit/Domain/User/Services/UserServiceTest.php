@@ -31,13 +31,13 @@ use App\Domain\User\Events\UserPasswordReseted;
 use App\Domain\User\Events\UserPasswordResetRequested;
 use App\Domain\User\Events\UserRegistered;
 use App\Domain\User\Events\UserUpdated;
-use App\Domain\User\Services\AuthService;
+use App\Domain\User\Services\UserService;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Events\Dispatcher;
 
 use Mockery;
 
-class AuthServiceTest extends TestCase
+class UserServiceTest extends TestCase
 {
     private Dispatcher $dispatcher;
     private RegisterUserHandler $registerUserHandler;
@@ -48,7 +48,7 @@ class AuthServiceTest extends TestCase
     private RequestUserEmailVerificationHandler $requestUserEmailVerificationHandler;
     private RequestResetUserPasswordHandler $requestResetUserPasswordHandler;
     private ResetUserPasswordHandler $resetUserPasswordHandler;
-    private AuthService $service;
+    private UserService $service;
     private User $user;
     private Token $token;
 
@@ -65,7 +65,7 @@ class AuthServiceTest extends TestCase
         $this->requestResetUserPasswordHandler = Mockery::mock(RequestResetUserPasswordHandler::class);
         $this->resetUserPasswordHandler = Mockery::mock(ResetUserPasswordHandler::class);
         $this->token = Mockery::mock(Token::class);
-        $this->service = new AuthService(
+        $this->service = new UserService(
             dispatcher: $this->dispatcher,
             registerUserHandler: $this->registerUserHandler,
             changeUserPasswordHandler: $this->changeUserPasswordHandler,
@@ -214,7 +214,7 @@ class AuthServiceTest extends TestCase
 
     public function test_verify_email()
     {
-        $command = new VerifyUserEmailCommand(id: $this->user->id, token: 'token');
+        $command = new VerifyUserEmailCommand(email: $this->user->email, token: 'token');
 
         /**
          * @var \Mockery\MockInterface
@@ -242,7 +242,7 @@ class AuthServiceTest extends TestCase
 
     public function test_request_verify_email()
     {
-        $command = new RequestUserEmailVerificationCommand(id: $this->user->id);
+        $command = new RequestUserEmailVerificationCommand(email: $this->user->email);
 
         /**
          * @var \Mockery\MockInterface
@@ -263,9 +263,9 @@ class AuthServiceTest extends TestCase
             ->once()
             ->with(Mockery::type(UserEmailVerificationRequested::class));
 
-        $result = $this->service->requestVerifyEmail($command);
+        $result = $this->service->requestEmailVerification($command);
 
-        $this->assertEquals($this->user, $result);
+        $this->assertTrue($result);
     }
 
     public function test_request_reset_password()

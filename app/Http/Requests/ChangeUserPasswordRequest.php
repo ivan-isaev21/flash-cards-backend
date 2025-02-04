@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Application\Shared\ValueObjects\Email;
-use App\Application\User\Commands\RegisterUserCommand;
+use App\Application\User\Commands\ChangeUserPasswordCommand;
+use App\Application\User\ValueObjects\UserId;
 use App\Infrastructure\PasswordSettings;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterUserRequest extends FormRequest
+class ChangeUserPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,6 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'email' => 'required|email',
             'password' => [
                 'required',
                 'confirmed',
@@ -35,12 +33,8 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
-    public function getRegisterUserCommand(): RegisterUserCommand
+    public function getChangeUserPasswordCommand(UserId $id): ChangeUserPasswordCommand
     {
-        return new RegisterUserCommand(
-            name: $this->input('name'),
-            email: new Email($this->input('email')),
-            password: $this->input('password')
-        );
+        return new ChangeUserPasswordCommand(id: $id, password: $this->input('password'));
     }
 }
