@@ -33,13 +33,13 @@ class CreateDeckRequest extends FormRequest
         ];
     }
 
-    public function getCreateDeckCommand(): CreateDeckCommand
+    public function getCreateDeckCommand(UserId $userId): CreateDeckCommand
     {
         return new CreateDeckCommand(
             name: $this->input('name'),
             locale: Locale::from($this->input('locale')),
             type: DeckType::from($this->input('type')),
-            createdBy: UserId::next()
+            createdBy: $userId
         );
     }
 }

@@ -15,7 +15,6 @@ use App\Http\Resources\DeckItemResourceCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-
 class DeckItemController extends Controller
 {
     private DeckItemService $service;
@@ -32,12 +31,18 @@ class DeckItemController extends Controller
 
     public function create(CreateDeckItemRequest $request): Response
     {
-        return response(new DeckItemResource($this->service->create($request->getCreateDeckItemCommand())), Response::HTTP_CREATED);
+        return response(
+            new DeckItemResource($this->service->create($request->getCreateDeckItemCommand())),
+            Response::HTTP_CREATED
+        );
     }
 
     public function update(UpdateDeckItemRequest $request, string $id): Response
     {
-        return response(new DeckItemResource($this->service->update($request->getUpdateDeckItemCommand(new DeckItemId($id)))), Response::HTTP_ACCEPTED);
+        return response(
+            new DeckItemResource($this->service->update($request->getUpdateDeckItemCommand(new DeckItemId($id)))),
+            Response::HTTP_ACCEPTED
+        );
     }
 
     public function delete(string $id)

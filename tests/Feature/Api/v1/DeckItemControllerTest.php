@@ -7,6 +7,7 @@ use App\Application\Shared\Enums\Locale;
 use App\Models\Card;
 use App\Models\Deck;
 use App\Models\DeckItem;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -18,6 +19,7 @@ class DeckItemControllerTest extends TestCase
 
     protected $returnStructure;
     protected DeckItem $deckItem;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -39,6 +41,8 @@ class DeckItemControllerTest extends TestCase
                 'card_id' => $card->id
             ]
         );
+
+        $this->user = User::factory()->withVerifiedToken()->create();
     }
 
     public function test_can_paginate_deck_items()
@@ -68,7 +72,7 @@ class DeckItemControllerTest extends TestCase
             'cardId' => $card->id
         ];
 
-        $response = $this->postJson(route('api.v1.deck-items.create'),  $deckItemData);
+        $response = $this->actingAs($this->user)->postJson(route('api.v1.deck-items.create'),  $deckItemData);
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure($this->returnStructure);
     }
@@ -83,14 +87,14 @@ class DeckItemControllerTest extends TestCase
             'cardId' => $card->id
         ];
 
-        $response = $this->putJson(route('api.v1.deck-items.update', ['id' => $this->deckItem->id]), $updateData);
+        $response = $this->actingAs($this->user)->putJson(route('api.v1.deck-items.update', ['id' => $this->deckItem->id]), $updateData);
         $response->assertStatus(Response::HTTP_ACCEPTED);
         $response->assertJsonStructure($this->returnStructure);
     }
 
     public function test_can_delete_deck_item()
     {
-        $response = $this->deleteJson(route('api.v1.deck-items.delete', ['id' => $this->deckItem->id]));
+        $response = $this->actingAs($this->user)->deleteJson(route('api.v1.deck-items.delete', ['id' => $this->deckItem->id]));
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 }

@@ -33,14 +33,14 @@ class CreateCardRequest extends FormRequest
         ];
     }
 
-    public function getCreateCardCommand(): CreateCardCommand
+    public function getCreateCardCommand(UserId $userId): CreateCardCommand
     {
         return new CreateCardCommand(
             locale: Locale::from($this->input('locale')),
             question: $this->input('question'),
             answer: $this->input('answer'),
             keywords: $this->input('keywords'),
-            createdBy: UserId::next()
+            createdBy: $userId
         );
     }
 }

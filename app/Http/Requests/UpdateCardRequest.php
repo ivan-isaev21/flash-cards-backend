@@ -34,11 +34,11 @@ class UpdateCardRequest extends FormRequest
         ];
     }
 
-    public function getUpdateCardCommand(string $id): UpdateCardCommand
+    public function getUpdateCardCommand(CardId $id, UserId $userId): UpdateCardCommand
     {
         return new UpdateCardCommand(
-            id: new CardId($id),
-            createdBy: UserId::next(),
+            id: $id,
+            createdBy: $userId,
             locale: $this->input('locale') ? Locale::from($this->input('locale')) : null,
             question: $this->input('question') ?? null,
             answer: $this->input('answer') ?? null,

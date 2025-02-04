@@ -34,11 +34,11 @@ class UpdateDeckRequest extends FormRequest
         ];
     }
 
-    public function getUpdateDeckCommand(string $id): UpdateDeckCommand
+    public function getUpdateDeckCommand(DeckId $id, UserId $userId): UpdateDeckCommand
     {
         return new UpdateDeckCommand(
-            id: new DeckId($id),
-            createdBy: UserId::next(),
+            id: $id,
+            createdBy: $userId,
             locale: $this->input('locale') !== null ? Locale::from($this->input('locale')) : null,
             name: $this->input('name') ?? null,
             type: $this->input('type') !== null ? DeckType::from($this->input('type')) : null

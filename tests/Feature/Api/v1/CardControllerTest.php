@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\v1;
 
 use App\Models\Card;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -13,6 +14,7 @@ class CardControllerTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     protected $returnStructure;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -28,6 +30,8 @@ class CardControllerTest extends TestCase
             'createdAt',
             'updatedAt'
         ];
+
+        $this->user = User::factory()->withVerifiedToken()->create();
     }
 
     public function test_can_paginate_cards()
@@ -60,7 +64,7 @@ class CardControllerTest extends TestCase
             'keywords' => $fakeData->keywords
         ];
 
-        $response = $this->postJson(route('api.v1.cards.create'),  $cardData);
+        $response = $this->actingAs($this->user)->postJson(route('api.v1.cards.create'),  $cardData);
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure($this->returnStructure);
     }
@@ -74,7 +78,7 @@ class CardControllerTest extends TestCase
             'answer' => 'Updated answer',
         ];
 
-        $response = $this->putJson(route('api.v1.cards.update', ['id' => $card->id]), $updateData);
+        $response = $this->actingAs($this->user)->putJson(route('api.v1.cards.update', ['id' => $card->id]), $updateData);
         $response->assertStatus(Response::HTTP_ACCEPTED);
         $response->assertJsonStructure($this->returnStructure);
     }
@@ -82,7 +86,7 @@ class CardControllerTest extends TestCase
     public function test_can_delete_card()
     {
         $card = Card::factory()->create();
-        $response = $this->deleteJson(route('api.v1.cards.delete', ['id' => $card->id]));
+        $response = $this->actingAs($this->user)->deleteJson(route('api.v1.cards.delete', ['id' => $card->id]));
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 }

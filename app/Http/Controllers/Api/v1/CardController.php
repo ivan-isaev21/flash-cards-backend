@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Application\Cards\Commands\DeleteCardCommand;
 use App\Application\Cards\Queries\GetCardsQuery;
 use App\Application\Cards\ValueObjects\CardId;
+use App\Application\User\ValueObjects\UserId;
 use App\Domain\Cards\Services\CardService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCardRequest;
@@ -26,17 +27,33 @@ class CardController extends Controller
 
     public function paginate(GetCardsRequest $request): Response
     {
-        return response(new CardResourceCollection($this->service->paginate($request->getCardsQuery()), Response::HTTP_OK));
+        return response(
+            new CardResourceCollection(
+                $this->service->paginate($request->getCardsQuery()),
+                Response::HTTP_OK
+            )
+        );
     }
 
     public function create(CreateCardRequest $request): Response
     {
-        return response(new CardResource($this->service->create($request->getCreateCardCommand())), Response::HTTP_CREATED);
+        return response(
+            new CardResource($this->service->create(
+                $request->getCreateCardCommand(new UserId($request->user()->id))
+            )),
+            Response::HTTP_CREATED
+        );
     }
 
     public function update(UpdateCardRequest $request, string $id): Response
     {
-        return response(new CardResource($this->service->update($request->getUpdateCardCommand($id))), Response::HTTP_ACCEPTED);
+        return response(
+            new CardResource($this->service->update($request->getUpdateCardCommand(
+                id: new CardId($id),
+                userId: new UserId($request->user()->id)
+            ))),
+            Response::HTTP_ACCEPTED
+        );
     }
 
     public function delete(string $id): Response

@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\v1;
 use App\Application\Cards\Enums\DeckType;
 use App\Application\Shared\Enums\Locale;
 use App\Models\Deck;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -15,6 +16,7 @@ class DeckControllerTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     protected $returnStructure;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -29,6 +31,8 @@ class DeckControllerTest extends TestCase
             'createdAt',
             'updatedAt'
         ];
+
+        $this->user = User::factory()->withVerifiedToken()->create();
     }
 
     public function test_can_paginate_decks()
@@ -61,7 +65,7 @@ class DeckControllerTest extends TestCase
             'name' => $fakeData->name,
         ];
 
-        $response = $this->postJson(route('api.v1.decks.create'),  $deckData);
+        $response = $this->actingAs($this->user)->postJson(route('api.v1.decks.create'),  $deckData);
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure($this->returnStructure);
     }
@@ -75,7 +79,7 @@ class DeckControllerTest extends TestCase
             'name' => 'Updated deck name'
         ];
 
-        $response = $this->putJson(route('api.v1.decks.update', ['id' => $deck->id]), $updateData);
+        $response = $this->actingAs($this->user)->putJson(route('api.v1.decks.update', ['id' => $deck->id]), $updateData);
         $response->assertStatus(Response::HTTP_ACCEPTED);
         $response->assertJsonStructure($this->returnStructure);
     }
@@ -83,7 +87,7 @@ class DeckControllerTest extends TestCase
     public function test_can_delete_deck()
     {
         $deck = Deck::factory()->create();
-        $response = $this->deleteJson(route('api.v1.decks.delete', ['id' => $deck->id]));
+        $response = $this->actingAs($this->user)->deleteJson(route('api.v1.decks.delete', ['id' => $deck->id]));
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 }
